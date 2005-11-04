@@ -13,7 +13,7 @@ Test::RandomResults - Test non-deterministic functions
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Test::Builder;
 my $Test = Test::Builder->new();
@@ -41,6 +41,8 @@ This is a work in progress. Comments are welcome.
   use Test::RandomResults;
 
   is_in( my_function, [ $list, $of, $items ], "result is inside list" );
+
+  is_between( my_function, sub { $_[0] cmp $_[1] }, 1, 10, "result between 1 and 10");
 
   length_lt( my_function, $limit, "length lower than $limit");
 
