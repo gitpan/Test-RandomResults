@@ -13,7 +13,7 @@ Test::RandomResults - Test non-deterministic functions
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Test::Builder;
 my $Test = Test::Builder->new();
@@ -42,11 +42,11 @@ This is a work in progress. Comments are welcome.
 
   is_in( my_function, [ $list, $of, $items ], "result is inside list" );
 
-  is_between( my_function, sub { $_[0] cmp $_[1] }, 1, 10, "result between 1 and 10");
+  in_between( my_function, sub { $_[0] cmp $_[1] }, 1, 10, "result between 1 and 10");
 
-  length_lt( my_function, $limit, "length lower than $limit");
+  length_lt( my_function, $limit, "length less than $limit");
 
-  length_le( my_function, $limit, "length lower or equal to $limit");
+  length_le( my_function, $limit, "length less or equal to $limit");
 
   length_eq( my_function, $limit, "length equal to $limit");
 
@@ -56,7 +56,7 @@ This is a work in progress. Comments are welcome.
 
 =head1 SPECIAL FEATURES
 
-Whenever I<Test::RandomResults> is invoked, a new seed is generated
+Whenever C<Test::RandomResults> is invoked, a new seed is generated
 and outputed as diagnostics. This is done so that you can use it to
 debug your code, if needed.
 
@@ -93,9 +93,19 @@ To compare strings:
 
 To compare numbers:
 
-  in_between( my_function, { $_[0] <=> $_[1] }, 1, 10, "result is between 1 and 10" );
+  in_between( my_function, { $_[0] <=> $_[1] }, 1, 10, 'result is between 1 and 10' );
 
-I<in_between> swaps the lower and upper limits, if need be (this means
+To compare something else:
+
+  in_between( my_function, &your_function_here, $lower_boundary, $upper_boundary,
+              'result is between boundaries' );
+
+As you can see, the function should use $_[0] and $_[1] to do the comparison.
+As with <=> and cmp, the function should return 1, 0 or -1 depending on whether
+the first argument ($_[0]) is greater, equal to, or less than the second one
+($_[1]).
+
+C<in_between> swaps the lower and upper limits, if need be (this means
 that checking whether a value is between 1 and 10 is the same as
 checking between 10 and 1).
 
@@ -117,9 +127,9 @@ sub in_between ($$$$;$) {
 
 =head2 length_lt
 
-Tests if length is lower than a limit.
+Tests if length is less than a limit.
 
-  length_lt( my_function, $limit, "length lower than $limit");
+  length_lt( my_function, $limit, "length less than $limit");
 
 =cut
 
@@ -134,9 +144,9 @@ sub length_lt ($$;$) {
 
 =head2 length_le
 
-Tests if length is lower or equal to a limit.
+Tests if length is less or equal to a limit.
 
-  length_le( my_function, $limit, "length lower or equal to $limit");
+  length_le( my_function, $limit, "length less or equal to $limit");
 
 =cut
 
@@ -213,6 +223,8 @@ sub _length ($$$) {
 =head1 TO DO
 
 * Check if N results of a function are evenly_distributed
+
+* Allow the user to choose the seed when invoking C<Test::RandomResults>
 
 =head1 AUTHOR
 

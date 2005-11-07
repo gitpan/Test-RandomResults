@@ -1,4 +1,4 @@
-Test::RandomResults version 0.01
+Test::RandomResults version 0.03
 ================================
 
 =head1 NAME
@@ -26,9 +26,11 @@ This is a work in progress. Comments are welcome.
 
   is_in( my_function, [ $list, $of, $items ], "result is inside list" );
 
-  length_lt( my_function, $limit, "length lower than $limit");
+  in_between( my_function, sub { $_[0] cmp $_[1] }, 1, 10, "result between 1 and 10");
 
-  length_le( my_function, $limit, "length lower or equal to $limit");
+  length_lt( my_function, $limit, "length less than $limit");
+
+  length_le( my_function, $limit, "length less or equal to $limit");
 
   length_eq( my_function, $limit, "length equal to $limit");
 
@@ -38,7 +40,7 @@ This is a work in progress. Comments are welcome.
 
 =head1 SPECIAL FEATURES
 
-Whenever I<Test::RandomResults> is invoked, a new seed is generated
+Whenever C<Test::RandomResults> is invoked, a new seed is generated
 and outputed as diagnostics. This is done so that you can use it to
 debug your code, if needed.
 
@@ -64,23 +66,33 @@ To compare strings:
 
 To compare numbers:
 
-  in_between( my_function, { $_[0] <=> $_[1] }, 1, 10, "result is between 1 and 10" );
+  in_between( my_function, { $_[0] <=> $_[1] }, 1, 10, 'result is between 1 and 10' );
 
-I<in_between> swaps the lower and upper limits, if need be (this means
+To compare something else:
+
+  in_between( my_function, &your_function_here, $lower_boundary, $upper_boundary,
+              'result is between boundaries' );
+
+As you can see, the function should use $_[0] and $_[1] to do the comparison.
+As with <=> and cmp, the function should return 1, 0 or -1 depending on whether
+the first argument ($_[0]) is greater, equal to, or less than the second one
+($_[1]).
+
+C<in_between> swaps the lower and upper limits, if need be (this means
 that checking whether a value is between 1 and 10 is the same as
 checking between 10 and 1).
 
 =head2 length_lt
 
-Tests if length is lower than a limit.
+Tests if length is less than a limit.
 
-  length_lt( my_function, $limit, "length lower than $limit");
+  length_lt( my_function, $limit, "length less than $limit");
 
 =head2 length_le
 
-Tests if length is lower or equal to a limit.
+Tests if length is less or equal to a limit.
 
-  length_le( my_function, $limit, "length lower or equal to $limit");
+  length_le( my_function, $limit, "length less or equal to $limit");
 
 =head2 length_eq
 
